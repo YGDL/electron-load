@@ -1,0 +1,6 @@
+".\Objects\STARTUP.obj",
+".\Objects\DAC.obj",
+".\Objects\test1.obj",
+".\Objects\LCD.obj" 
+TO ".\Objects\纯发热电子负载" 
+PRINT(".\Listings\纯发热电子负载.m51") RAMSIZE(256) 
