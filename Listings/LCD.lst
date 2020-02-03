@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   LCD                                                               02/02/2020 23:32:40 PAGE 1   
+C51 COMPILER V9.60.0.0   LCD                                                               02/03/2020 11:40:55 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD
@@ -13,92 +13,93 @@ line level    source
    3          sbit RS=P0^4;
    4          sbit EN=P0^2;
    5          sbit RW=P0^3;
-   6          
-   7          unsigned char current[]="Current:00.0000A";         //电流显示数组
-   8          unsigned char voltage[]="Voltage:00.0000V";         //电压显示数组
-   9          
-  10          void break_down(unsigned char *p,unsigned long int i)   // 类型
-  11          {
-  12   1        *(p+8)=(i/100000)%10+'0';
-  13   1        *(p+9)=(i/10000)%10+'0';
-  14   1        *(p+11)=(i/1000)%10+'0';
-  15   1        *(p+12)=(i/100)%10+'0';
-  16   1        *(p+13)=(i/10)%10+'0';
-  17   1        *(p+14)=i%10+'0';
-  18   1      }
-  19          
-  20          void write_com(unsigned char com)                 //写命令数据
-  21          {
-  22   1          RS=0;                             //写命令
-  23   1          P2=com;                           //命令数据
-  24   1          delay_ms(1);
-  25   1          EN=1;                             //开启使能EN
-  26   1          delay_ms(1);
-  27   1          EN=0;                         //关闭使能EN
-  28   1      }
-  29          
-  30          void write_data(unsigned char data_)              //写显示数据
-  31          {
-  32   1          RS=1;                             //写数据
-  33   1          P2=data_;                           //数据
-  34   1          delay_ms(1);
-  35   1          EN=1;                             //开启使能EN
-  36   1          delay_ms(1);
-  37   1          EN=0;                             //关闭使能EN
-  38   1      }
-  39          
-  40          void init_LCD()                       //LCD初始化
-  41          {
-  42   1        int num;
-  43   1        EN=0;
-  44   1        RW=0;
-  45   1        write_com(0x38);                    //设置16*2显示，5*7点阵，8位数据接口
-  46   1        write_com(0x0e);                    //开显示，显示光标，光标闪烁
-  47   1        write_com(0x01);                    //清显示屏
-  48   1        write_com(0x80+0x00);                 //地址指针指向第一行第一位
-  49   1        delay_ms(100);
-  50   1        for(num=0;num<16;num++)                 //写电流显示
-  51   1        {
-  52   2          write_data(current[num]);
-  53   2        }
-  54   1        write_com(0x80+0x40);
-C51 COMPILER V9.60.0.0   LCD                                                               02/02/2020 23:32:40 PAGE 2   
+   6          sfr data_bus=0xa0;
+   7          
+   8          unsigned char current[]="Current:00.0000A";         //电流显示数组
+   9          unsigned char voltage[]="Voltage:00.0000V";         //电压显示数组
+  10          
+  11          void break_down(unsigned char *p,unsigned long int i)   // 类型
+  12          {
+  13   1        *(p+8)=(i/100000)%10+'0';
+  14   1        *(p+9)=(i/10000)%10+'0';
+  15   1        *(p+11)=(i/1000)%10+'0';
+  16   1        *(p+12)=(i/100)%10+'0';
+  17   1        *(p+13)=(i/10)%10+'0';
+  18   1        *(p+14)=i%10+'0';
+  19   1      }
+  20          
+  21          void write_com(unsigned char com)                 //写命令数据
+  22          {
+  23   1          RS=0;                             //写命令
+  24   1          data_bus=com;                           //命令数据
+  25   1          delay_ms(1);
+  26   1          EN=1;                             //开启使能EN
+  27   1          delay_ms(1);
+  28   1          EN=0;                         //关闭使能EN
+  29   1      }
+  30          
+  31          void write_data(unsigned char data_)              //写显示数据
+  32          {
+  33   1          RS=1;                             //写数据
+  34   1          data_bus=data_;                           //数据
+  35   1          delay_ms(1);
+  36   1          EN=1;                             //开启使能EN
+  37   1          delay_ms(1);
+  38   1          EN=0;                             //关闭使能EN
+  39   1      }
+  40          
+  41          void init_LCD()                       //LCD初始化
+  42          {
+  43   1        int num;
+  44   1        EN=0;
+  45   1        RW=0;
+  46   1        write_com(0x38);                    //设置16*2显示，5*7点阵，8位数据接口
+  47   1        write_com(0x0e);                    //开显示，显示光标，光标闪烁
+  48   1        write_com(0x01);                    //清显示屏
+  49   1        write_com(0x80+0x00);                 //地址指针指向第一行第一位
+  50   1        delay_ms(100);
+  51   1        for(num=0;num<16;num++)                 //写电流显示
+  52   1        {
+  53   2          write_data(current[num]);
+  54   2        }
+C51 COMPILER V9.60.0.0   LCD                                                               02/03/2020 11:40:55 PAGE 2   
 
-  55   1        for(num=0;num<16;num++)                 //写电压显示
-  56   1        {
-  57   2          write_data(voltage[num]);
-  58   2        }
-  59   1        write_com(0x80+0x0e-m);
-  60   1      }
-  61          //  0   0   .   0   0   0   0   A
-  62          // 08     09    0A    0B    0C    0D    0E    0F
-  63          //m范围0-5
-  64          void write_current()                    //保证光标位置不动
-  65          {
-  66   1        int num;
-  67   1        char j[6]={0x80+0x0e,0x80+0x0d,0x80+0x0c,0x80+0x0b,0x80+0x9,0x80+0x08};//地址
-  68   1        //  A       0   0   0     0 .   0   0
-  69   1        break_down(current,c);
-  70   1        write_com(0x80+0x08); //地址指针指向第一行刷显示
-  71   1        for(num=8;num<15;num++)
-  72   1          write_data(current[num]);
-  73   1        write_com(j[m]);  //地址指针归位
-  74   1      }
-  75          //  0   0   .   0   0   0   0   V
-  76          // 08     09    0A    0B    0C    0D    0E    0F
-  77          //m范围6-11
-  78          void write_voltage()                    //保证光标位置不动
-  79          {
-  80   1        int num;
-  81   1        char j[6]={0x80+0x40+0x0e,0x80+0x40+0x0d,0x80+0x40+0x0c,
-  82   1                   0x80+0x40+0x0b,0x80+0x40+0x09,0x80+0x40+0x08};//地址
-  83   1        //    V       0         0         0         0     .   0         0
-  84   1        break_down(voltage,v);
-  85   1        write_com(0x80+0x40+0x08);                //地址指针指向第二行刷显示
-  86   1        for(num=8;num<15;num++)
-  87   1          write_data(voltage[num]);
-  88   1        write_com(j[m-6]);                    //地址指针归位
-  89   1      }
+  55   1        write_com(0x80+0x40);
+  56   1        for(num=0;num<16;num++)                 //写电压显示
+  57   1        {
+  58   2          write_data(voltage[num]);
+  59   2        }
+  60   1        write_com(0x80+0x0e-m);
+  61   1      }
+  62          //  0   0   .   0   0   0   0   A
+  63          // 08     09    0A    0B    0C    0D    0E    0F
+  64          //m范围0-5
+  65          void write_current()                    //保证光标位置不动
+  66          {
+  67   1        int num;
+  68   1        char j[6]={0x80+0x0e,0x80+0x0d,0x80+0x0c,0x80+0x0b,0x80+0x9,0x80+0x08};//地址
+  69   1        //  A       0   0   0     0 .   0   0
+  70   1        break_down(current,c);
+  71   1        write_com(0x80+0x08); //地址指针指向第一行刷显示
+  72   1        for(num=8;num<15;num++)
+  73   1          write_data(current[num]);
+  74   1        write_com(j[m]);  //地址指针归位
+  75   1      }
+  76          //  0   0   .   0   0   0   0   V
+  77          // 08     09    0A    0B    0C    0D    0E    0F
+  78          //m范围6-11
+  79          void write_voltage()                    //保证光标位置不动
+  80          {
+  81   1        int num;
+  82   1        char j[6]={0x80+0x40+0x0e,0x80+0x40+0x0d,0x80+0x40+0x0c,
+  83   1                   0x80+0x40+0x0b,0x80+0x40+0x09,0x80+0x40+0x08};//地址
+  84   1        //    V       0         0         0         0     .   0         0
+  85   1        break_down(voltage,v);
+  86   1        write_com(0x80+0x40+0x08);                //地址指针指向第二行刷显示
+  87   1        for(num=8;num<15;num++)
+  88   1          write_data(voltage[num]);
+  89   1        write_com(j[m-6]);                    //地址指针归位
+  90   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   TEST1                                                             02/02/2020 23:32:40 PAGE 1   
+C51 COMPILER V9.60.0.0   TEST1                                                             02/03/2020 11:40:55 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TEST1
@@ -62,7 +62,7 @@ line level    source
   52   1        IT0=1;                //指定外部中断0上升、下降沿触发，IT0
   53   1        EX0=1;                //使能外部中断
   54   1        EA=1;               //开总中断
-C51 COMPILER V9.60.0.0   TEST1                                                             02/02/2020 23:32:40 PAGE 2   
+C51 COMPILER V9.60.0.0   TEST1                                                             02/03/2020 11:40:55 PAGE 2   
 
   55   1      }
   56          ////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ line level    source
  114   3            P16=0;
  115   3            if(m>11)
  116   3              m=0;
-C51 COMPILER V9.60.0.0   TEST1                                                             02/02/2020 23:32:40 PAGE 3   
+C51 COMPILER V9.60.0.0   TEST1                                                             02/03/2020 11:40:55 PAGE 3   
 
  117   3          }
  118   2          e=1;              //更新位置标志位

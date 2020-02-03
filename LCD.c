@@ -3,6 +3,7 @@
 sbit RS=P0^4;
 sbit EN=P0^2;
 sbit RW=P0^3;
+sfr data_bus=0xa0;
 
 unsigned char current[]="Current:00.0000A";					//电流显示数组
 unsigned char voltage[]="Voltage:00.0000V";					//电压显示数组
@@ -20,7 +21,7 @@ void break_down(unsigned char *p,unsigned long int i)		// 类型
 void write_com(unsigned char com)      						//写命令数据
 {
     RS=0;        											//写命令
-    P2=com;      											//命令数据
+    data_bus=com;      											//命令数据
     delay_ms(1);
     EN=1;        											//开启使能EN
     delay_ms(1);
@@ -30,7 +31,7 @@ void write_com(unsigned char com)      						//写命令数据
 void write_data(unsigned char data_)     					//写显示数据
 {
     RS=1;        											//写数据
-    P2=data_;     											//数据
+    data_bus=data_;     											//数据
 		delay_ms(1);
     EN=1;        											//开启使能EN
     delay_ms(1);
